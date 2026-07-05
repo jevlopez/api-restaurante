@@ -1,0 +1,36 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Usuario {
+  id            Int             @id @default(autoincrement())
+  nombre        String
+  correo        String          @unique
+  password      String
+  rol           String          @default("cliente")
+  reservaciones Reservacion[]
+}
+
+model Mesa {
+  id            Int             @id @default(autoincrement())
+  numero        Int             @unique
+  capacidad     Int
+  disponible    Boolean         @default(true)
+  reservaciones Reservacion[]
+}
+
+model Reservacion {
+  id          Int      @id @default(autoincrement())
+  fecha       DateTime @db.Date
+  hora        String   @db.VarChar(10) // O usa un formato apropiado
+  personas    Int
+  estado      String   @default("pendiente")
+  usuario_id  Int
+  mesa_id     Int
+  usuario     Usuario  @relation(fields: [usuario_id], references: [id])
+  mesa        Mesa     @relation(fields: [mesa_id], references: [id])
+}
